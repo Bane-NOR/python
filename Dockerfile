@@ -1,1 +1,4 @@
-FROM ghcr.io/bn-apps/base:latest
+FROM python:3.11-bullseye
+
+RUN apt update && apt upgrade -y
+
