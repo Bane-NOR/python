@@ -35,6 +35,7 @@ jobs:
 
     - name: Build and Push
       run: |
+        echo "here are versions: ${{ env.VERSIONS }}"
         for VERSION in ${{ env.VERSIONS }}; do
           echo "Building and pushing image with python version: $VERSION"
           docker buildx build --no-cache --build-arg NODE_VERSION=$VERSION -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION" --push -f Dockerfile .

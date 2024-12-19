@@ -1,4 +1,6 @@
-FROM python:3.11-bullseye
+ARG VERSION
+
+FROM python:$VERSION-bullseye
 
 RUN apt update && \
     apt upgrade -y && \
