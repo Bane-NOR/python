@@ -1,4 +1,4 @@
-name: Container Build
+name: Build validation
 
 on:
   pull_request:
