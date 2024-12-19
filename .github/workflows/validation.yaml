@@ -1,0 +1,43 @@
+name: Build validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+  schedule:
+    - cron: '0 1 * * *'
+
+permissions: write-all
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  VERSIONS: 3.11 3.12 3.10
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Registry Login
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Convert IMAGE_NAME to lowercase
+      id: lowercase
+      run: echo "IMAGE_NAME=$(echo ${{ env.IMAGE_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+    - name: Build
+      run: |
+        for VERSION in ${{ env.VERSIONS }}; do
+          echo "Building and pushing image with python version: $VERSION"
+          docker buildx build --no-cache --build-arg PYTHON_VERSION=$VERSION -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION" -f Dockerfile .
+          if [ $? -ne 0 ]; then
+            echo "Error building or pushing image with version: $VERSION"
+            exit 1
+          fi
+        done
