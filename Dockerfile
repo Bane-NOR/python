@@ -1,6 +1,6 @@
-ARG VERSION
+ARG PYTHON_VERSION
 
-FROM python:$VERSION-bullseye
+FROM python:$PYTHON_VERSION-bullseye
 
 RUN apt update && \
     apt upgrade -y && \
